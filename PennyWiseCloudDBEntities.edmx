@@ -1,0 +1,968 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PennyWiseCloudDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="expenseTable">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" Nullable="false" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="Category" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Subcategory" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="incomeTable">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" Nullable="false" />
+          <Property Name="Source" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Description" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="loginTable">
+          <Key>
+            <PropertyRef Name="loginID" />
+          </Key>
+          <Property Name="loginID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" Nullable="false" />
+          <Property Name="login_date" Type="date" Nullable="false" />
+          <Property Name="login_time" Type="time" Precision="7" Nullable="false" />
+          <Property Name="logout_date" Type="date" />
+          <Property Name="logout_time" Type="time" Precision="7" />
+        </EntityType>
+        <EntityType Name="messageTable">
+          <Key>
+            <PropertyRef Name="messageID" />
+          </Key>
+          <Property Name="messageID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PositivityScore" Type="int" />
+          <Property Name="personalized_message" Type="varchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="plannerTable">
+          <Key>
+            <PropertyRef Name="plannerID" />
+          </Key>
+          <Property Name="plannerID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="userID" Type="int" Nullable="false" />
+          <Property Name="date_start" Type="date" Nullable="false" />
+          <Property Name="date_end" Type="date" Nullable="false" />
+          <Property Name="allowance" Type="money" Nullable="false" />
+          <Property Name="savings_goal" Type="money" Nullable="false" />
+          <Property Name="needs_amount" Type="money" Nullable="false" />
+          <Property Name="wants_amount" Type="money" Nullable="false" />
+          <Property Name="funds_amount" Type="money" Nullable="false" />
+          <Property Name="needs_percentage" Type="float" Nullable="false" />
+          <Property Name="wants_percentage" Type="float" Nullable="false" />
+          <Property Name="funds_percentage" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="userTable">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="username" Type="varbinary(max)" Nullable="false" />
+          <Property Name="password" Type="varbinary(max)" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__expenseTa__userI__3F466844">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="expenseTable" Type="Self.expenseTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="expenseTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__incomeTab__userI__3E52440B">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="incomeTable" Type="Self.incomeTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="incomeTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__loginTabl__userI__403A8C7D">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="loginTable" Type="Self.loginTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="loginTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__plannerTa__userI__412EB0B6">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="plannerTable" Type="Self.plannerTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="plannerTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetMostRecentPlannerID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspAddExpense" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="expenseID" Type="int" Mode="In" />
+          <Parameter Name="description" Type="varchar(max)" Mode="In" />
+          <Parameter Name="amount" Type="money" Mode="In" />
+          <Parameter Name="category" Type="varchar" Mode="In" />
+          <Parameter Name="subcategory" Type="varchar" Mode="In" />
+          <Parameter Name="date" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspAddIncome" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="incomeID" Type="int" Mode="In" />
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="incomeSource" Type="varchar" Mode="In" />
+          <Parameter Name="incomeAmount" Type="money" Mode="In" />
+          <Parameter Name="incomeDate" Type="date" Mode="In" />
+          <Parameter Name="incomeDesc" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="uspApplyOrModifyBudgetPlan" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="plannerid" Type="int" Mode="In" />
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="startdate" Type="date" Mode="In" />
+          <Parameter Name="enddate" Type="date" Mode="In" />
+          <Parameter Name="allowance" Type="money" Mode="In" />
+          <Parameter Name="savingsgoal" Type="money" Mode="In" />
+          <Parameter Name="needsamount" Type="money" Mode="In" />
+          <Parameter Name="wantsamount" Type="money" Mode="In" />
+          <Parameter Name="fundsamount" Type="money" Mode="In" />
+          <Parameter Name="needspercent" Type="float" Mode="In" />
+          <Parameter Name="wantspercent" Type="float" Mode="In" />
+          <Parameter Name="fundspercent" Type="float" Mode="In" />
+        </Function>
+        <Function Name="uspCalculateExpenseIncomeRatioCounts" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PlannerID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspCreateNewAccount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="nvarchar" Mode="In" />
+          <Parameter Name="password" Type="nvarchar" Mode="In" />
+          <Parameter Name="returnvalue" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="uspDeleteExpense" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="expenseid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspDeleteIncome" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="incomeID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspFilterExpensesByCategory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="category" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="uspFilterExpensesByDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="startdate" Type="date" Mode="In" />
+          <Parameter Name="enddate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspFilterExpensesBySubcategory" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="subcategory" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="uspFilterIncomeByDate" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDateIncome" Type="date" Mode="In" />
+          <Parameter Name="endDateIncome" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspFilterIncomeBySource" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="searchIncomeSource" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="uspGetActualExpenses_FundsAmount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="date" Mode="In" />
+          <Parameter Name="endDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspGetActualExpenses_NeedsAmount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="date" Mode="In" />
+          <Parameter Name="endDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspGetActualExpenses_WantsAmount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="date" Mode="In" />
+          <Parameter Name="endDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspGetActualExpensesPercentage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="date" Mode="In" />
+          <Parameter Name="endDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspGetCurrentBalance" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspGetExpenses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspGetIncome" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspGetPersonalizedMessage" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="uspGetPersonalizedMessageByPositivityScore" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PositivityScore" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspGetPlannedExpenses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="date" Mode="In" />
+          <Parameter Name="endDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspGetSavingsGoal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspGetTotalExpenses" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspGetTotalIncome" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspLogIn" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="username" Type="nvarchar" Mode="In" />
+          <Parameter Name="password" Type="nvarchar" Mode="In" />
+          <Parameter Name="returnvalue" Type="int" Mode="InOut" />
+          <Parameter Name="userID" Type="int" Mode="InOut" />
+          <Parameter Name="loginID" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="uspLogOut" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="loginid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspPlannedAndActualDiff" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="startDate" Type="date" Mode="In" />
+          <Parameter Name="endDate" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspRetrieveAccountDetails" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="uspSearchExpensesByDesc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="search" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="uspSearchIncomeByDesc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userid" Type="int" Mode="In" />
+          <Parameter Name="search" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="uspUpdateExpense" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="expenseID" Type="int" Mode="In" />
+          <Parameter Name="description" Type="varchar(max)" Mode="In" />
+          <Parameter Name="amount" Type="money" Mode="In" />
+          <Parameter Name="category" Type="varchar" Mode="In" />
+          <Parameter Name="subcategory" Type="varchar" Mode="In" />
+          <Parameter Name="date" Type="date" Mode="In" />
+        </Function>
+        <Function Name="uspUpdateIncome" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="incomeID" Type="int" Mode="In" />
+          <Parameter Name="userID" Type="int" Mode="In" />
+          <Parameter Name="incomeSource" Type="varchar" Mode="In" />
+          <Parameter Name="incomeAmount" Type="money" Mode="In" />
+          <Parameter Name="incomeDate" Type="date" Mode="In" />
+          <Parameter Name="incomeDesc" Type="varchar(max)" Mode="In" />
+        </Function>
+        <EntityContainer Name="PennyWiseCloudDBModelStoreContainer">
+          <EntitySet Name="expenseTable" EntityType="Self.expenseTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="incomeTable" EntityType="Self.incomeTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="loginTable" EntityType="Self.loginTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="messageTable" EntityType="Self.messageTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="plannerTable" EntityType="Self.plannerTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="userTable" EntityType="Self.userTable" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__expenseTa__userI__3F466844" Association="Self.FK__expenseTa__userI__3F466844">
+            <End Role="userTable" EntitySet="userTable" />
+            <End Role="expenseTable" EntitySet="expenseTable" />
+          </AssociationSet>
+          <AssociationSet Name="FK__incomeTab__userI__3E52440B" Association="Self.FK__incomeTab__userI__3E52440B">
+            <End Role="userTable" EntitySet="userTable" />
+            <End Role="incomeTable" EntitySet="incomeTable" />
+          </AssociationSet>
+          <AssociationSet Name="FK__loginTabl__userI__403A8C7D" Association="Self.FK__loginTabl__userI__403A8C7D">
+            <End Role="userTable" EntitySet="userTable" />
+            <End Role="loginTable" EntitySet="loginTable" />
+          </AssociationSet>
+          <AssociationSet Name="FK__plannerTa__userI__412EB0B6" Association="Self.FK__plannerTa__userI__412EB0B6">
+            <End Role="userTable" EntitySet="userTable" />
+            <End Role="plannerTable" EntitySet="plannerTable" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PennyWiseCloudDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="expenseTable">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Subcategory" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="userTable" Relationship="Self.FK__expenseTa__userI__3F466844" FromRole="expenseTable" ToRole="userTable" />
+        </EntityType>
+        <EntityType Name="incomeTable">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="Source" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="userTable" Relationship="Self.FK__incomeTab__userI__3E52440B" FromRole="incomeTable" ToRole="userTable" />
+        </EntityType>
+        <EntityType Name="loginTable">
+          <Key>
+            <PropertyRef Name="loginID" />
+          </Key>
+          <Property Name="loginID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="login_date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="login_time" Type="Time" Nullable="false" Precision="7" />
+          <Property Name="logout_date" Type="DateTime" Precision="0" />
+          <Property Name="logout_time" Type="Time" Precision="7" />
+          <NavigationProperty Name="userTable" Relationship="Self.FK__loginTabl__userI__403A8C7D" FromRole="loginTable" ToRole="userTable" />
+        </EntityType>
+        <EntityType Name="messageTable">
+          <Key>
+            <PropertyRef Name="messageID" />
+          </Key>
+          <Property Name="messageID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PositivityScore" Type="Int32" />
+          <Property Name="personalized_message" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="plannerTable">
+          <Key>
+            <PropertyRef Name="plannerID" />
+          </Key>
+          <Property Name="plannerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="userID" Type="Int32" Nullable="false" />
+          <Property Name="date_start" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="date_end" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="allowance" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="savings_goal" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="needs_amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="wants_amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="funds_amount" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="needs_percentage" Type="Double" Nullable="false" />
+          <Property Name="wants_percentage" Type="Double" Nullable="false" />
+          <Property Name="funds_percentage" Type="Double" Nullable="false" />
+          <NavigationProperty Name="userTable" Relationship="Self.FK__plannerTa__userI__412EB0B6" FromRole="plannerTable" ToRole="userTable" />
+        </EntityType>
+        <EntityType Name="userTable">
+          <Key>
+            <PropertyRef Name="userID" />
+          </Key>
+          <Property Name="userID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="username" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+          <Property Name="password" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+          <NavigationProperty Name="expenseTables" Relationship="Self.FK__expenseTa__userI__3F466844" FromRole="userTable" ToRole="expenseTable" />
+          <NavigationProperty Name="incomeTables" Relationship="Self.FK__incomeTab__userI__3E52440B" FromRole="userTable" ToRole="incomeTable" />
+          <NavigationProperty Name="loginTables" Relationship="Self.FK__loginTabl__userI__403A8C7D" FromRole="userTable" ToRole="loginTable" />
+          <NavigationProperty Name="plannerTables" Relationship="Self.FK__plannerTa__userI__412EB0B6" FromRole="userTable" ToRole="plannerTable" />
+        </EntityType>
+        <Association Name="FK__expenseTa__userI__3F466844">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="expenseTable" Type="Self.expenseTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="expenseTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__incomeTab__userI__3E52440B">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="incomeTable" Type="Self.incomeTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="incomeTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__loginTabl__userI__403A8C7D">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="loginTable" Type="Self.loginTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="loginTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__plannerTa__userI__412EB0B6">
+          <End Role="userTable" Type="Self.userTable" Multiplicity="1" />
+          <End Role="plannerTable" Type="Self.plannerTable" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="userTable">
+              <PropertyRef Name="userID" />
+            </Principal>
+            <Dependent Role="plannerTable">
+              <PropertyRef Name="userID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PennyWiseCloudDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="expenseTables" EntityType="Self.expenseTable" />
+          <EntitySet Name="incomeTables" EntityType="Self.incomeTable" />
+          <EntitySet Name="loginTables" EntityType="Self.loginTable" />
+          <EntitySet Name="messageTables" EntityType="Self.messageTable" />
+          <EntitySet Name="plannerTables" EntityType="Self.plannerTable" />
+          <EntitySet Name="userTables" EntityType="Self.userTable" />
+          <AssociationSet Name="FK__expenseTa__userI__3F466844" Association="Self.FK__expenseTa__userI__3F466844">
+            <End Role="userTable" EntitySet="userTables" />
+            <End Role="expenseTable" EntitySet="expenseTables" />
+          </AssociationSet>
+          <AssociationSet Name="FK__incomeTab__userI__3E52440B" Association="Self.FK__incomeTab__userI__3E52440B">
+            <End Role="userTable" EntitySet="userTables" />
+            <End Role="incomeTable" EntitySet="incomeTables" />
+          </AssociationSet>
+          <AssociationSet Name="FK__loginTabl__userI__403A8C7D" Association="Self.FK__loginTabl__userI__403A8C7D">
+            <End Role="userTable" EntitySet="userTables" />
+            <End Role="loginTable" EntitySet="loginTables" />
+          </AssociationSet>
+          <AssociationSet Name="FK__plannerTa__userI__412EB0B6" Association="Self.FK__plannerTa__userI__412EB0B6">
+            <End Role="userTable" EntitySet="userTables" />
+            <End Role="plannerTable" EntitySet="plannerTables" />
+          </AssociationSet>
+          <FunctionImport Name="GetMostRecentPlannerID" ReturnType="Collection(Int32)">
+          <Parameter Name="UserID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspAddExpense" ReturnType="Collection(Decimal)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="expenseID" Mode="In" Type="Int32" />
+            <Parameter Name="description" Mode="In" Type="String" />
+            <Parameter Name="amount" Mode="In" Type="Decimal" />
+            <Parameter Name="category" Mode="In" Type="String" />
+            <Parameter Name="subcategory" Mode="In" Type="String" />
+            <Parameter Name="date" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspAddIncome" ReturnType="Collection(Decimal)">
+            <Parameter Name="incomeID" Mode="In" Type="Int32" />
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="incomeSource" Mode="In" Type="String" />
+            <Parameter Name="incomeAmount" Mode="In" Type="Decimal" />
+            <Parameter Name="incomeDate" Mode="In" Type="DateTime" />
+            <Parameter Name="incomeDesc" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="uspApplyOrModifyBudgetPlan" ReturnType="Collection(Decimal)">
+            <Parameter Name="plannerid" Mode="In" Type="Int32" />
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="startdate" Mode="In" Type="DateTime" />
+            <Parameter Name="enddate" Mode="In" Type="DateTime" />
+            <Parameter Name="allowance" Mode="In" Type="Decimal" />
+            <Parameter Name="savingsgoal" Mode="In" Type="Decimal" />
+            <Parameter Name="needsamount" Mode="In" Type="Decimal" />
+            <Parameter Name="wantsamount" Mode="In" Type="Decimal" />
+            <Parameter Name="fundsamount" Mode="In" Type="Decimal" />
+            <Parameter Name="needspercent" Mode="In" Type="Double" />
+            <Parameter Name="wantspercent" Mode="In" Type="Double" />
+            <Parameter Name="fundspercent" Mode="In" Type="Double" />
+          </FunctionImport>
+          <FunctionImport Name="uspCalculateExpenseIncomeRatioCounts" ReturnType="Collection(Int32)">
+          <Parameter Name="PlannerID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspCreateNewAccount">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="password" Mode="In" Type="String" />
+            <Parameter Name="returnvalue" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspDeleteExpense">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="expenseid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspDeleteIncome">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="incomeID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspFilterExpensesByCategory" ReturnType="Collection(PennyWiseCloudDBModel.uspFilterExpensesByCategory_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="category" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="uspFilterExpensesByDate" ReturnType="Collection(PennyWiseCloudDBModel.uspFilterExpensesByDate_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="startdate" Mode="In" Type="DateTime" />
+            <Parameter Name="enddate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspFilterExpensesBySubcategory" ReturnType="Collection(PennyWiseCloudDBModel.uspFilterExpensesBySubcategory_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="subcategory" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="uspFilterIncomeByDate" ReturnType="Collection(PennyWiseCloudDBModel.uspFilterIncomeByDate_Result)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDateIncome" Mode="In" Type="DateTime" />
+            <Parameter Name="endDateIncome" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspFilterIncomeBySource" ReturnType="Collection(PennyWiseCloudDBModel.uspFilterIncomeBySource_Result)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="searchIncomeSource" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetActualExpenses_FundsAmount" ReturnType="Collection(Decimal)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetActualExpenses_NeedsAmount" ReturnType="Collection(Decimal)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetActualExpenses_WantsAmount" ReturnType="Collection(Decimal)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetActualExpensesPercentage" ReturnType="Collection(PennyWiseCloudDBModel.uspGetActualExpensesPercentage_Result)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetCurrentBalance" ReturnType="Collection(Decimal)">
+          <Parameter Name="userID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetExpenses" ReturnType="Collection(PennyWiseCloudDBModel.uspGetExpenses_Result)">
+          <Parameter Name="userid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetIncome" ReturnType="Collection(PennyWiseCloudDBModel.uspGetIncome_Result)">
+          <Parameter Name="userID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetPersonalizedMessage" ReturnType="Collection(String)" />
+          <FunctionImport Name="uspGetPersonalizedMessageByPositivityScore" ReturnType="Collection(String)">
+          <Parameter Name="PositivityScore" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetPlannedExpenses" ReturnType="Collection(PennyWiseCloudDBModel.uspGetPlannedExpenses_Result)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetSavingsGoal" ReturnType="Collection(Decimal)">
+          <Parameter Name="userID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetTotalExpenses" ReturnType="Collection(Decimal)">
+          <Parameter Name="userID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspGetTotalIncome" ReturnType="Collection(Decimal)">
+          <Parameter Name="userID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspLogIn">
+            <Parameter Name="username" Mode="In" Type="String" />
+            <Parameter Name="password" Mode="In" Type="String" />
+            <Parameter Name="returnvalue" Mode="InOut" Type="Int32" />
+            <Parameter Name="userID" Mode="InOut" Type="Int32" />
+            <Parameter Name="loginID" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspLogOut">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="loginid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspPlannedAndActualDiff" ReturnType="Collection(Decimal)">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="startDate" Mode="In" Type="DateTime" />
+            <Parameter Name="endDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspRetrieveAccountDetails" ReturnType="Collection(PennyWiseCloudDBModel.uspRetrieveAccountDetails_Result)">
+          <Parameter Name="userID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="uspSearchExpensesByDesc" ReturnType="Collection(PennyWiseCloudDBModel.uspSearchExpensesByDesc_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="search" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="uspSearchIncomeByDesc" ReturnType="Collection(PennyWiseCloudDBModel.uspSearchIncomeByDesc_Result)">
+            <Parameter Name="userid" Mode="In" Type="Int32" />
+            <Parameter Name="search" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="uspUpdateExpense">
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="expenseID" Mode="In" Type="Int32" />
+            <Parameter Name="description" Mode="In" Type="String" />
+            <Parameter Name="amount" Mode="In" Type="Decimal" />
+            <Parameter Name="category" Mode="In" Type="String" />
+            <Parameter Name="subcategory" Mode="In" Type="String" />
+            <Parameter Name="date" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="uspUpdateIncome">
+            <Parameter Name="incomeID" Mode="In" Type="Int32" />
+            <Parameter Name="userID" Mode="In" Type="Int32" />
+            <Parameter Name="incomeSource" Mode="In" Type="String" />
+            <Parameter Name="incomeAmount" Mode="In" Type="Decimal" />
+            <Parameter Name="incomeDate" Mode="In" Type="DateTime" />
+            <Parameter Name="incomeDesc" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="uspFilterExpensesByCategory_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="String" Name="Category" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Subcategory" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="uspFilterExpensesByDate_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="String" Name="Category" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Subcategory" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="uspFilterExpensesBySubcategory_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="String" Name="Category" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Subcategory" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="uspFilterIncomeByDate_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Source" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="uspFilterIncomeBySource_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Source" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="uspGetActualExpensesPercentage_Result">
+          <Property Type="Decimal" Name="percentage_needs" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="percentage_wants" Nullable="true" Precision="19" />
+          <Property Type="Decimal" Name="percentage_funds" Nullable="true" Precision="19" />
+        </ComplexType>
+        <ComplexType Name="uspGetExpenses_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="String" Name="Category" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Subcategory" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="uspGetIncome_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Source" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="uspGetPlannedExpenses_Result">
+          <Property Type="Decimal" Name="needs_amount" Nullable="false" Precision="19" />
+          <Property Type="Decimal" Name="wants_amount" Nullable="false" Precision="19" />
+          <Property Type="Decimal" Name="funds_amount" Nullable="false" Precision="19" />
+          <Property Type="Double" Name="needs_percentage" Nullable="false" />
+          <Property Type="Double" Name="wants_percentage" Nullable="false" />
+          <Property Type="Double" Name="funds_percentage" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="uspRetrieveAccountDetails_Result">
+          <Property Type="Int32" Name="userID" Nullable="false" />
+          <Property Type="String" Name="username" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="password" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="uspSearchExpensesByDesc_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="String" Name="Category" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="Subcategory" Nullable="false" MaxLength="50" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="uspSearchIncomeByDesc_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Source" Nullable="false" MaxLength="50" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" />
+          <Property Type="DateTime" Name="Date" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PennyWiseCloudDBModelStoreContainer" CdmEntityContainer="PennyWiseCloudDBEntities">
+          <EntitySetMapping Name="expenseTables">
+            <EntityTypeMapping TypeName="PennyWiseCloudDBModel.expenseTable">
+              <MappingFragment StoreEntitySet="expenseTable">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="incomeTables">
+            <EntityTypeMapping TypeName="PennyWiseCloudDBModel.incomeTable">
+              <MappingFragment StoreEntitySet="incomeTable">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="loginTables">
+            <EntityTypeMapping TypeName="PennyWiseCloudDBModel.loginTable">
+              <MappingFragment StoreEntitySet="loginTable">
+                <ScalarProperty Name="loginID" ColumnName="loginID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="login_date" ColumnName="login_date" />
+                <ScalarProperty Name="login_time" ColumnName="login_time" />
+                <ScalarProperty Name="logout_date" ColumnName="logout_date" />
+                <ScalarProperty Name="logout_time" ColumnName="logout_time" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="messageTables">
+            <EntityTypeMapping TypeName="PennyWiseCloudDBModel.messageTable">
+              <MappingFragment StoreEntitySet="messageTable">
+                <ScalarProperty Name="messageID" ColumnName="messageID" />
+                <ScalarProperty Name="PositivityScore" ColumnName="PositivityScore" />
+                <ScalarProperty Name="personalized_message" ColumnName="personalized_message" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="plannerTables">
+            <EntityTypeMapping TypeName="PennyWiseCloudDBModel.plannerTable">
+              <MappingFragment StoreEntitySet="plannerTable">
+                <ScalarProperty Name="plannerID" ColumnName="plannerID" />
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="date_start" ColumnName="date_start" />
+                <ScalarProperty Name="date_end" ColumnName="date_end" />
+                <ScalarProperty Name="allowance" ColumnName="allowance" />
+                <ScalarProperty Name="savings_goal" ColumnName="savings_goal" />
+                <ScalarProperty Name="needs_amount" ColumnName="needs_amount" />
+                <ScalarProperty Name="wants_amount" ColumnName="wants_amount" />
+                <ScalarProperty Name="funds_amount" ColumnName="funds_amount" />
+                <ScalarProperty Name="needs_percentage" ColumnName="needs_percentage" />
+                <ScalarProperty Name="wants_percentage" ColumnName="wants_percentage" />
+                <ScalarProperty Name="funds_percentage" ColumnName="funds_percentage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="userTables">
+            <EntityTypeMapping TypeName="PennyWiseCloudDBModel.userTable">
+              <MappingFragment StoreEntitySet="userTable">
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="password" ColumnName="password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetMostRecentPlannerID" FunctionName="PennyWiseCloudDBModel.Store.GetMostRecentPlannerID" />
+          <FunctionImportMapping FunctionImportName="uspAddExpense" FunctionName="PennyWiseCloudDBModel.Store.uspAddExpense" />
+          <FunctionImportMapping FunctionImportName="uspAddIncome" FunctionName="PennyWiseCloudDBModel.Store.uspAddIncome" />
+          <FunctionImportMapping FunctionImportName="uspApplyOrModifyBudgetPlan" FunctionName="PennyWiseCloudDBModel.Store.uspApplyOrModifyBudgetPlan" />
+          <FunctionImportMapping FunctionImportName="uspCalculateExpenseIncomeRatioCounts" FunctionName="PennyWiseCloudDBModel.Store.uspCalculateExpenseIncomeRatioCounts" />
+          <FunctionImportMapping FunctionImportName="uspCreateNewAccount" FunctionName="PennyWiseCloudDBModel.Store.uspCreateNewAccount" />
+          <FunctionImportMapping FunctionImportName="uspDeleteExpense" FunctionName="PennyWiseCloudDBModel.Store.uspDeleteExpense" />
+          <FunctionImportMapping FunctionImportName="uspDeleteIncome" FunctionName="PennyWiseCloudDBModel.Store.uspDeleteIncome" />
+          <FunctionImportMapping FunctionImportName="uspFilterExpensesByCategory" FunctionName="PennyWiseCloudDBModel.Store.uspFilterExpensesByCategory">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspFilterExpensesByCategory_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspFilterExpensesByDate" FunctionName="PennyWiseCloudDBModel.Store.uspFilterExpensesByDate">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspFilterExpensesByDate_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspFilterExpensesBySubcategory" FunctionName="PennyWiseCloudDBModel.Store.uspFilterExpensesBySubcategory">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspFilterExpensesBySubcategory_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspFilterIncomeByDate" FunctionName="PennyWiseCloudDBModel.Store.uspFilterIncomeByDate">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspFilterIncomeByDate_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspFilterIncomeBySource" FunctionName="PennyWiseCloudDBModel.Store.uspFilterIncomeBySource">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspFilterIncomeBySource_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspGetActualExpenses_FundsAmount" FunctionName="PennyWiseCloudDBModel.Store.uspGetActualExpenses_FundsAmount" />
+          <FunctionImportMapping FunctionImportName="uspGetActualExpenses_NeedsAmount" FunctionName="PennyWiseCloudDBModel.Store.uspGetActualExpenses_NeedsAmount" />
+          <FunctionImportMapping FunctionImportName="uspGetActualExpenses_WantsAmount" FunctionName="PennyWiseCloudDBModel.Store.uspGetActualExpenses_WantsAmount" />
+          <FunctionImportMapping FunctionImportName="uspGetActualExpensesPercentage" FunctionName="PennyWiseCloudDBModel.Store.uspGetActualExpensesPercentage">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspGetActualExpensesPercentage_Result">
+                <ScalarProperty Name="percentage_needs" ColumnName="percentage_needs" />
+                <ScalarProperty Name="percentage_wants" ColumnName="percentage_wants" />
+                <ScalarProperty Name="percentage_funds" ColumnName="percentage_funds" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspGetCurrentBalance" FunctionName="PennyWiseCloudDBModel.Store.uspGetCurrentBalance" />
+          <FunctionImportMapping FunctionImportName="uspGetExpenses" FunctionName="PennyWiseCloudDBModel.Store.uspGetExpenses">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspGetExpenses_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspGetIncome" FunctionName="PennyWiseCloudDBModel.Store.uspGetIncome">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspGetIncome_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspGetPersonalizedMessage" FunctionName="PennyWiseCloudDBModel.Store.uspGetPersonalizedMessage" />
+          <FunctionImportMapping FunctionImportName="uspGetPersonalizedMessageByPositivityScore" FunctionName="PennyWiseCloudDBModel.Store.uspGetPersonalizedMessageByPositivityScore" />
+          <FunctionImportMapping FunctionImportName="uspGetPlannedExpenses" FunctionName="PennyWiseCloudDBModel.Store.uspGetPlannedExpenses">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspGetPlannedExpenses_Result">
+                <ScalarProperty Name="needs_amount" ColumnName="needs_amount" />
+                <ScalarProperty Name="wants_amount" ColumnName="wants_amount" />
+                <ScalarProperty Name="funds_amount" ColumnName="funds_amount" />
+                <ScalarProperty Name="needs_percentage" ColumnName="needs_percentage" />
+                <ScalarProperty Name="wants_percentage" ColumnName="wants_percentage" />
+                <ScalarProperty Name="funds_percentage" ColumnName="funds_percentage" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspGetSavingsGoal" FunctionName="PennyWiseCloudDBModel.Store.uspGetSavingsGoal" />
+          <FunctionImportMapping FunctionImportName="uspGetTotalExpenses" FunctionName="PennyWiseCloudDBModel.Store.uspGetTotalExpenses" />
+          <FunctionImportMapping FunctionImportName="uspGetTotalIncome" FunctionName="PennyWiseCloudDBModel.Store.uspGetTotalIncome" />
+          <FunctionImportMapping FunctionImportName="uspLogIn" FunctionName="PennyWiseCloudDBModel.Store.uspLogIn" />
+          <FunctionImportMapping FunctionImportName="uspLogOut" FunctionName="PennyWiseCloudDBModel.Store.uspLogOut" />
+          <FunctionImportMapping FunctionImportName="uspPlannedAndActualDiff" FunctionName="PennyWiseCloudDBModel.Store.uspPlannedAndActualDiff" />
+          <FunctionImportMapping FunctionImportName="uspRetrieveAccountDetails" FunctionName="PennyWiseCloudDBModel.Store.uspRetrieveAccountDetails">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspRetrieveAccountDetails_Result">
+                <ScalarProperty Name="userID" ColumnName="userID" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="password" ColumnName="password" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspSearchExpensesByDesc" FunctionName="PennyWiseCloudDBModel.Store.uspSearchExpensesByDesc">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspSearchExpensesByDesc_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspSearchIncomeByDesc" FunctionName="PennyWiseCloudDBModel.Store.uspSearchIncomeByDesc">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="PennyWiseCloudDBModel.uspSearchIncomeByDesc_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="uspUpdateExpense" FunctionName="PennyWiseCloudDBModel.Store.uspUpdateExpense" />
+          <FunctionImportMapping FunctionImportName="uspUpdateIncome" FunctionName="PennyWiseCloudDBModel.Store.uspUpdateIncome" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
